@@ -1,0 +1,28 @@
+FROM golang:1.9.1
+
+# Protobuf compiler https://github.com/google/protobuf/releases
+# GRPC plugin https://github.com/grpc/grpc-go/releases
+
+ENV PROTO_C_VERSION=3.5.0 \
+    GRPC_VERSION=1.7.0 \
+    DEBIAN_FRONTEND="noninteractive"
+
+WORKDIR $GOPATH/src
+
+RUN apt-get update \
+    && apt-get install -yq zip
+
+RUN wget https://github.com/google/protobuf/releases/download/v${PROTO_C_VERSION}/protoc-${PROTO_C_VERSION}-linux-x86_64.zip -O temp.zip \
+    && unzip temp.zip && rm temp.zip \
+    && mv bin/protoc /usr/bin/ \
+    && mv include/* /usr/ \
+    && rm -rf bin \
+    && wget https://github.com/grpc/grpc-go/archive/v${GRPC_VERSION}.zip -O temp.zip \
+    && unzip temp.zip && rm temp.zip \
+    && mkdir -p google.golang.org/grpc && mv grpc-go-${GRPC_VERSION}/* google.golang.org/grpc/ && rm -rf grpc-go-${GRPC_VERSION}
+
+RUN go get -u -v github.com/golang/protobuf/protoc-gen-go
+RUN go get -u -v github.com/golang/protobuf/proto
+
+# docker build -f DockerfileProtoGo -t protobuf-go:1.9.1-3.5.0-1.7.0 .
+# docker run -u `id -u $USER` -it -v $(pwd):$(pwd) -w $(pwd) protobuf-go:1.9.1-3.5.0-1.7.0 ./gen_go.sh
