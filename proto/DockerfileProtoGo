@@ -1,10 +1,10 @@
-FROM golang:1.9.1
+FROM golang:1.11.0
 
 # Protobuf compiler https://github.com/google/protobuf/releases
 # GRPC plugin https://github.com/grpc/grpc-go/releases
 
-ENV PROTO_C_VERSION=3.5.0 \
-    GRPC_VERSION=1.7.0 \
+ENV PROTO_C_VERSION=3.6.1 \
+    GRPC_VERSION=1.15.0 \
     DEBIAN_FRONTEND="noninteractive"
 
 WORKDIR $GOPATH/src
@@ -24,5 +24,5 @@ RUN wget https://github.com/google/protobuf/releases/download/v${PROTO_C_VERSION
 RUN go get -u -v github.com/golang/protobuf/protoc-gen-go
 RUN go get -u -v github.com/golang/protobuf/proto
 
-# docker build -f DockerfileProtoGo -t protobuf-go:1.9.1-3.5.0-1.7.0 .
-# docker run -u `id -u $USER` -it -v $(pwd):$(pwd) -w $(pwd) protobuf-go:1.9.1-3.5.0-1.7.0 ./gen_go.sh
+# docker build -f DockerfileProtoGo -t protobuf-go:1.11.0-3.6.1-1.15.0 .
+# docker run -u `id -u $USER` -it -v $(pwd):$(pwd) -w $(pwd) protobuf-go:1.11.0-3.6.1-1.15.0 ./gen_go.sh

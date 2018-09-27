@@ -1,0 +1,29 @@
+FROM ubuntu
+
+# Protobuf compiler https://github.com/google/protobuf/releases
+
+# https://repo.maven.apache.org/maven2/io/grpc/protoc-gen-grpc-java
+# https://github.com/grpc/grpc-java/tree/master/compiler
+# https://github.com/grpc/grpc-java
+# http://www.grpc.io/docs/tutorials/basic/java.html
+
+ENV PROTO_C_VERSION=3.6.1 \
+    GRPC_VERSION=1.15.0 \
+    DEBIAN_FRONTEND="noninteractive"
+
+WORKDIR /app
+
+RUN apt-get update \
+    && apt-get install -yq wget zip
+
+RUN wget https://github.com/google/protobuf/releases/download/v${PROTO_C_VERSION}/protoc-${PROTO_C_VERSION}-linux-x86_64.zip -O temp.zip \
+    && unzip temp.zip && rm temp.zip \
+    && mv bin/protoc /usr/bin/ \
+    && mv include/* /usr/ \
+    && rm -rf bin \
+    && wget https://repo.maven.apache.org/maven2/io/grpc/protoc-gen-grpc-java/${GRPC_VERSION}/protoc-gen-grpc-java-${GRPC_VERSION}-linux-x86_64.exe -O protoc-gen-grpc-java \
+    && chmod +x protoc-gen-grpc-java \
+    && mv protoc-gen-grpc-java /usr/bin/
+
+# docker build -f DockerfileProtoJava -t protobuf-java:3.6.1-1.15.0 .
+# docker run -u `id -u $USER` -it -v $(pwd):$(pwd) -w $(pwd) protobuf-java:3.6.1-1.15.0 ./gen_java.sh
